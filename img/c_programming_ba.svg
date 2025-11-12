@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900">
+  <rect width="100%" height="100%" fill="#eef2ff"/>
+  <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="#4f46e5" font-size="36" font-family="Inter, Arial">C Programming</text>
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#374151" font-size="20">(Bangla)</text>
+</svg>

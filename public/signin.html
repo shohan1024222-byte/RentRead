@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - RentRead</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .auth-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .auth-header h1 {
+            color: var(--text);
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .auth-header p {
+            color: var(--muted);
+            margin: 0;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            background: var(--bg-soft);
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .form-input.error {
+            border-color: #ef4444;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .auth-button {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 20px;
+        }
+        .auth-button:hover {
+            background: #3730a3;
+        }
+        .auth-button:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+        }
+        .auth-link {
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .auth-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        .error-alert {
+            background: #ef4444;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        .forgot-password {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .forgot-password a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .remember-me input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .remember-me label {
+            font-size: 14px;
+            color: var(--muted);
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to access your RentRead account</p>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                Sign in successful! Redirecting to dashboard...
+            </div>
+
+            <div class="error-alert" id="errorAlert">
+                Invalid credentials. Please try again.
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Signing you in...
+            </div>
+
+            <form id="signinForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email address" required>
+                    <div class="error-message" id="emailError">Please enter a valid email address</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+                    <div class="error-message" id="passwordError">Please enter your password</div>
+                </div>
+
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Remember me for 30 days</label>
+                </div>
+
+                <button type="submit" class="auth-button" id="submitButton">Sign In</button>
+            </form>
+
+            <div class="forgot-password">
+                <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+            </div>
+
+            <div class="auth-link">
+                Don't have an account? <a href="signup.html">Create one here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('signinForm');
+        const submitButton = document.getElementById('submitButton');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const errorAlert = document.getElementById('errorAlert');
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            
+            // Clear previous errors
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.classList.remove('error');
+            });
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                document.getElementById('email').classList.add('error');
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate password
+            if (!password) {
+                document.getElementById('password').classList.add('error');
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+
+            // Show loading state
+            loading.style.display = 'block';
+            submitButton.disabled = true;
+            errorAlert.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            const formData = {
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success - store token and redirect
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userEmail', formData.email);
+                    
+                    // Handle remember me option
+                    const rememberMe = document.getElementById('rememberMe').checked;
+                    if (rememberMe) {
+                        // Set token to expire in 30 days instead of 7
+                        localStorage.setItem('rememberMe', 'true');
+                    }
+                    
+                    successMessage.style.display = 'block';
+                    form.style.display = 'none';
+                    
+                    // Redirect to dashboard after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else {
+                    // Error from server
+                    throw new Error(data.error || 'Sign in failed');
+                }
+            } catch (error) {
+                console.error('Sign in error:', error);
+                let errorMessage = 'Sign in failed. Please try again.';
+                
+                if (error.message.includes('Invalid credentials')) {
+                    errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+                }
+                
+                errorAlert.textContent = errorMessage;
+                errorAlert.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+                submitButton.disabled = false;
+            }
+        });
+
+        // Real-time email validation
+        document.getElementById('email').addEventListener('blur', function() {
+            const email = this.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email && !emailRegex.test(email)) {
+                this.classList.add('error');
+                document.getElementById('emailError').style.display = 'block';
+            } else {
+                this.classList.remove('error');
+                document.getElementById('emailError').style.display = 'none';
+            }
+        });
+
+        // Show forgot password alert (placeholder)
+        function showForgotPassword() {
+            alert('Password reset functionality will be implemented soon. Please contact support if you need assistance.');
+        }
+
+        // Check if user is already logged in
+        if (localStorage.getItem('token')) {
+            // Verify token is still valid by making a request to a protected endpoint
+            fetch('/api/auth/verify', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Token is invalid, remove it
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('rememberMe');
+                }
+            }).catch(() => {
+                // Network error or server down, assume token might be valid
+                // but don't redirect automatically
+            });
+        }
+
+        // Auto-fill email if user was remembered
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('userEmail');
+            if (savedEmail && localStorage.getItem('rememberMe')) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+    </script>
+</body>
+</html>

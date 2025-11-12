@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - RentRead</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .contact-header h1 {
+            font-size: 2.5rem;
+            margin: 0 0 15px 0;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-header p {
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .contact-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(2, 6, 23, 0.12);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .contact-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--text);
+            font-size: 1.3rem;
+        }
+
+        .contact-info {
+            color: var(--muted);
+            margin-bottom: 15px;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .contact-link:hover {
+            color: #7c3aed;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .contact-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="topbar">
+        <div class="container">
+            <div class="row between">
+                <a href="/" class="brand">
+                    <div class="brand-logo">📚</div>
+                    <div>
+                        <h1>RentRead</h1>
+                        <small>Contact Support</small>
+                    </div>
+                </a>
+                <div class="nav">
+                    <a href="/">Home</a>
+                    <a href="/dashboard.html">Dashboard</a>
+                    <a href="/admin.html">Admin</a>
+                    <a href="/contact.html" style="color: var(--accent);">Contact</a>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="goBack()">← Back</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="contact-container">
+        <!-- Header -->
+        <div class="contact-header">
+            <h1>📞 Contact Us</h1>
+            <p>Get in touch with our support team. We're here to help you with any questions or concerns.</p>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="contact-grid" style="grid-template-columns: repeat(2, 1fr); gap: 30px;">
+            <div class="contact-card">
+                <div class="contact-icon">📧</div>
+                <h3>Email Support</h3>
+                <div class="contact-info">
+                    Send us an email and we'll respond within 24 hours
+                </div>
+                <a href="mailto:shohan1024222@gmail.com" class="contact-link">
+                    📧 shohan1024222@gmail.com
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">�</div>
+                <h3>Email Support</h3>
+                <div class="contact-info">
+                    Send us an email and we'll respond within 24 hours
+                </div>
+                <a href="mailto:paulsmriti003@gmail.com" class="contact-link">
+                    📧 paulsmriti003@gmail.com
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">📱</div>
+                <h3>Phone Support</h3>
+                <div class="contact-info">
+                    Call us during business hours for immediate assistance
+                </div>
+                <a href="tel:+8801620145753" class="contact-link">
+                    📞 01620145753
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">📱</div>
+                <h3>Phone Support</h3>
+                <div class="contact-info">
+                    Call us during business hours for immediate assistance
+                </div>
+                <a href="tel:+8801600754954" class="contact-link">
+                    📞 01600754954
+                </a>
+            </div>
+        </div>
+
+
+
+        <!-- Additional Info -->
+        <div style="text-align: center; margin-top: 40px; color: var(--muted);">
+            <p><strong>Business Hours:</strong> Sunday - Thursday, 9:00 AM - 6:00 PM (GMT+6)</p>
+            <p><strong>Address:</strong> Dhaka, Bangladesh</p>
+        </div>
+    </main>
+
+    <script>
+        // Go back function
+        function goBack() {
+            if (document.referrer && document.referrer !== window.location.href) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+
+
+        // Theme support (if available)
+        if (localStorage.getItem('theme')) {
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme'));
+        }
+    </script>
+</body>
+</html>

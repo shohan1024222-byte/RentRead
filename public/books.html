@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Books - RentRead</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto p-6">
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Available Books</h2>
+        <div id="authSection">
+          <!-- Will be populated by JavaScript based on auth state -->
+        </div>
+      </div>
+
+      <div id="booksList" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      </div>
+    </div>
+
+    <!-- modal area for rentals -->
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-40 items-center justify-center">
+      <div class="bg-white p-6 rounded max-w-md w-full">
+        <h3 id="modalTitle" class="text-lg font-bold">Rent Book</h3>
+        <p class="mt-2">Choose days to rent (1-30)</p>
+        <input id="rentDays" type="number" min="1" max="30" value="1" class="w-full p-2 mt-2 border" />
+        <div class="mt-4 flex justify-end">
+          <button id="rentConfirm" class="px-4 py-2 bg-green-600 text-white rounded">Rent</button>
+          <button id="rentCancel" class="px-4 py-2 ml-2 bg-gray-300 rounded">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+      let isUserAuthenticated = false;
+
+      // Check authentication and setup page
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          isUserAuthenticated = await authManager.checkAuth();
+          setupAuthSection();
+          await loadBooks();
+        } catch (error) {
+          console.error('Page setup failed:', error);
+          setupAuthSection();
+          await loadBooks();
+        }
+      });
+
+      function setupAuthSection() {
+        const authSection = document.getElementById('authSection');
+        
+        if (isUserAuthenticated) {
+          authSection.innerHTML = `
+            <button id="btnDashboard" class="px-3 py-1 bg-blue-600 text-white rounded">My Rentals</button>
+            <button id="btnLogout" class="px-3 py-1 ml-2 bg-gray-300 rounded">Logout</button>
+          `;
+          
+          document.getElementById('btnDashboard').onclick = () => {
+            window.location.href = 'dashboard.html';
+          };
+          
+          document.getElementById('btnLogout').onclick = () => {
+            authManager.logout();
+            showNotification('Logged out successfully', 'success');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          };
+        } else {
+          authSection.innerHTML = `
+            <a href="signin.html" class="px-3 py-1 bg-blue-600 text-white rounded">Sign In</a>
+            <a href="signup.html" class="px-3 py-1 ml-2 bg-green-600 text-white rounded">Sign Up</a>
+          `;
+        }
+      }
+
+      async function loadBooks() {
+        try {
+          const response = await fetch('/api/books');
+          const books = await response.json();
+          
+          const el = document.getElementById('booksList');
+          el.innerHTML = '';
+          
+          if (!books || books.length === 0) {
+            el.innerHTML = '<p class="text-gray-500">No books available at the moment.</p>';
+            return;
+          }
+          
+          books.forEach(book => {
+            const card = document.createElement('div');
+            card.className = 'bg-white p-4 rounded shadow';
+            card.innerHTML = `
+              <h3 class="font-bold">${book.title}</h3>
+              <p class="text-sm text-gray-600">${book.description || 'No description available'}</p>
+              <div class="mt-3 flex justify-between items-center">
+                <span class="text-sm text-gray-600">BDT 5/day</span>
+                <button class="rent-btn px-3 py-1 bg-blue-600 text-white rounded" data-book-id="${book.id}" data-book-title="${book.title}">
+                  Rent
+                </button>
+              </div>
+            `;
+            el.appendChild(card);
+          });
+          
+          // Attach event listeners to rent buttons
+          document.querySelectorAll('.rent-btn').forEach(btn => {
+            btn.onclick = (e) => {
+              const bookId = e.target.dataset.bookId;
+              const bookTitle = e.target.dataset.bookTitle;
+              openRentModal(bookId, bookTitle);
+            };
+          });
+        } catch (error) {
+          console.error('Failed to load books:', error);
+          document.getElementById('booksList').innerHTML = '<p class="text-red-500">Failed to load books. Please try again later.</p>';
+        }
+      }
+
+      let currentBookToRent = null;
+      
+      function openRentModal(bookId, title) {
+        if (!isUserAuthenticated) {
+          showNotification('Please sign in to rent books', 'warning');
+          setTimeout(() => {
+            window.location.href = 'signin.html';
+          }, 2000);
+          return;
+        }
+        
+        currentBookToRent = bookId;
+        document.getElementById('modalTitle').innerText = 'Rent: ' + title;
+        const modal = document.getElementById('modal');
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+      }
+      
+      document.getElementById('rentCancel').onclick = () => {
+        document.getElementById('modal').classList.add('hidden');
+        document.getElementById('modal').style.display = 'none';
+      };
+      
+      document.getElementById('rentConfirm').onclick = async () => {
+        const days = Number(document.getElementById('rentDays').value) || 1;
+        
+        if (days < 1 || days > 30) {
+          showNotification('Please enter a valid number of days (1-30)', 'error');
+          return;
+        }
+        
+        try {
+          const response = await apiRequest('/api/rent/rent', {
+            method: 'POST',
+            body: JSON.stringify({ 
+              bookId: parseInt(currentBookToRent), 
+              days: days 
+            })
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            showNotification(`Book rented successfully for ${days} day(s)!`, 'success');
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('modal').style.display = 'none';
+          } else {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to rent book');
+          }
+        } catch (error) {
+          console.error('Rental failed:', error);
+          showNotification(error.message, 'error');
+        }
+      };
+    </script>
+  </body>
+</html>

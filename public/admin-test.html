@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login Test</title>
+</head>
+<body>
+    <h1>Admin Login Test</h1>
+    <button onclick="testLogin()">Test Admin Login</button>
+    <div id="result"></div>
+
+    <script>
+        async function testLogin() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                console.log('Starting admin login test...');
+                
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@gmail.com',
+                        password: '123'
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (response.ok && data.success) {
+                    result.innerHTML = `
+                        <h2 style="color: green;">✅ Login Successful!</h2>
+                        <p><strong>Token:</strong> ${data.token.substring(0, 20)}...</p>
+                        <p><strong>Admin:</strong> ${data.admin.name} (${data.admin.email})</p>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <h2 style="color: red;">❌ Login Failed</h2>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Error:</strong> ${data.error || 'Unknown error'}</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Test failed:', error);
+                result.innerHTML = `
+                    <h2 style="color: red;">❌ Network Error</h2>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

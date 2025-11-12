@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel • RentRead</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Admin Login Overlay Styles */
+    .admin-login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* Initially hide admin content, show login overlay */
+    #adminContent {
+      display: none;
+    }
+
+    .admin-login-modal {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header h2 {
+      color: var(--text);
+      margin: 0 0 10px 0;
+      font-size: 1.5em;
+    }
+
+    .login-header p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--bg-soft);
+      border-radius: 8px;
+      background: var(--bg-soft);
+      color: var(--text);
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .full-width {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .login-error {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8d7da;
+      color: #721c24;
+      border-radius: 6px;
+      border: 1px solid #f5c6cb;
+      text-align: center;
+    }
+
+    /* Loading state */
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Topbar -->
+  <header class="topbar">
+    <div class="container row between">
+      <a class="brand" href="/">
+        <div class="brand-logo">
+          <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background circle -->
+            <circle cx="20" cy="20" r="18" fill="#4F46E5" stroke="#3730A3" stroke-width="2"/>
+            
+            <!-- Book icon -->
+            <rect x="12" y="14" width="16" height="12" rx="1" fill="#FFFFFF"/>
+            <rect x="12" y="14" width="3" height="12" fill="#E5E7EB"/>
+            <line x1="17" y1="17" x2="26" y2="17" stroke="#9CA3AF" stroke-width="1"/>
+            <line x1="17" y1="19" x2="24" y2="19" stroke="#9CA3AF" stroke-width="1"/>
+            <line x1="17" y1="21" x2="26" y2="21" stroke="#9CA3AF" stroke-width="1"/>
+            <line x1="17" y1="23" x2="25" y2="23" stroke="#9CA3AF" stroke-width="1"/>
+            
+            <!-- Admin badge -->
+            <circle cx="32" cy="8" r="5" fill="#EF4444"/>
+            <text x="32" y="11" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="white">A</text>
+          </svg>
+        </div>
+        <div>
+          <h1>RentRead Admin</h1>
+          <small>Manage book catalog</small>
+        </div>
+      </a>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/admin.html" class="active">Admin</a>
+      </nav>
+      <div class="actions">
+        <div class="theme-selector">
+          <button class="btn" id="toggleTheme" aria-label="Choose theme">🎨 Themes</button>
+          <div class="theme-dropdown" id="themeDropdown">
+            <button class="theme-option" data-theme="light">☀️ Light</button>
+            <button class="theme-option" data-theme="dark">🌙 Dark</button>
+            <button class="theme-option" data-theme="ocean">🌊 Ocean</button>
+            <button class="theme-option" data-theme="forest">🌲 Forest</button>
+            <button class="theme-option" data-theme="sunset">🌅 Sunset</button>
+            <button class="theme-option" data-theme="purple">💜 Purple</button>
+            <button class="theme-option" data-theme="rose">🌹 Rose</button>
+            <button class="theme-option" data-theme="midnight">🌌 Midnight</button>
+            <button class="theme-option" data-theme="galaxy">🌠 Galaxy</button>
+            <button class="theme-option" data-theme="gold">🏆 Gold</button>
+            <button class="theme-option" data-theme="cyber">⚡ Cyber</button>
+            <button class="theme-option" data-theme="cherry">🍒 Cherry</button>
+            <button class="theme-option" data-theme="sky">☁️ Sky</button>
+            <button class="theme-option" data-theme="emerald">💎 Emerald</button>
+            <button class="theme-option" data-theme="lavender">🪻 Lavender</button>
+            <button class="theme-option" data-theme="red">🔴 Red</button>
+            <button class="theme-option" data-theme="pink">🎀 Pink</button>
+            <button class="theme-option" data-theme="black">⚫ Black</button>
+          </div>
+        </div>
+        <div id="authActions">
+          <button class="btn secondary" onclick="handleLogout()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Hero -->
+  <section class="hero" style="padding: 30px 0;">
+    <div class="container">
+      <div class="hero-card">
+        <div>
+          <h2>📚 Book Catalog Management</h2>
+          <p>Add, edit, delete and manage your book inventory with complete control over your catalog.</p>
+          <div class="hero-badges">
+            <span class="badge">CRUD Operations</span>
+            <span class="badge alt">Full Control</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Login Modal -->
+  <div class="admin-login-overlay" id="adminLoginOverlay">
+    <div class="admin-login-modal">
+      <div class="login-header">
+        <h2>🔐 Admin Login</h2>
+        <p>Please login to access the admin panel</p>
+      </div>
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label for="adminEmail">Email</label>
+          <input type="email" id="adminEmail" placeholder="admin@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label for="adminPassword">Password</label>
+          <input type="password" id="adminPassword" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn primary full-width">Login</button>
+      </form>
+      <div class="login-error" id="loginError" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container" id="adminContent" style="padding-bottom: 60px; display: none;">
+    <!-- Controls Section -->
+    <section style="margin-bottom: 30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div class="search">
+            <span>🔎</span>
+            <input id="searchInput" type="search" placeholder="Search books..." />
+          </div>
+          <button id="searchBtn" class="btn">Search</button>
+          <button id="clearBtn" class="btn secondary">Clear</button>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="addNewBtn" class="btn primary">➕ Add New Book</button>
+          <button id="refreshBtn" class="btn">🔃 Refresh</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Books Grid -->
+    <section>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text);">📖 Books Catalog</h2>
+        <div id="bookCount" style="color: var(--muted); font-size: 0.9rem;">Loading...</div>
+      </div>
+      <div id="booksGrid" class="grid"></div>
+    </section>
+  </main>
+
+  <!-- Book Form Modal -->
+  <div class="rr-modal-backdrop" id="bookModal">
+    <div class="rr-modal" role="dialog" aria-modal="true" style="max-width: 600px;">
+      <h3 id="modalTitle">Add New Book</h3>
+      
+      <form id="bookForm" style="margin-top: 20px;">
+        <input name="id" type="hidden" />
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+          <div style="grid-column: 1 / -1;">
+            <label for="title" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Title *</label>
+            <input id="title" name="title" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text);" />
+          </div>
+          
+          <div>
+            <label for="author" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Author</label>
+            <input id="author" name="author" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text);" />
+          </div>
+          
+          <div>
+            <label for="category" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Category</label>
+            <select id="category" name="category" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text);">
+              <option value="">Select Category</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="General Science">General Science</option>
+              <option value="Science Fiction">Science Fiction</option>
+              <option value="Extra Educational">Extra Educational</option>
+            </select>
+          </div>
+          
+          <div style="grid-column: 1 / -1;">
+            <label for="description" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Description</label>
+            <textarea id="description" name="description" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text); resize: vertical;"></textarea>
+          </div>
+          
+          <div>
+            <label for="book_image" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Book Cover Image 📷</label>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <input id="book_image" name="book_image" type="file" accept="image/*" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text);" />
+              <div id="imagePreview" style="display: none; text-align: center;">
+                <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;" />
+                <p style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">Image Preview</p>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <label for="price_per_day" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Price per Day (৳)</label>
+            <input id="price_per_day" name="price_per_day" type="number" step="0.01" min="0" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text);" />
+          </div>
+          
+          <div style="grid-column: 1 / -1;">
+            <label for="book_file" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Book File (PDF/PPTX) 📚</label>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <input id="book_file" name="book_file" type="file" accept=".pdf,.pptx,.ppt" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text);" />
+              <div id="filePreview" style="display: none; padding: 10px; background: rgba(79, 70, 229, 0.1); border-radius: 8px; border-left: 3px solid var(--accent);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 1.5rem;">📄</span>
+                  <div>
+                    <p id="fileName" style="font-weight: 600; margin: 0; color: var(--text);"></p>
+                    <p id="fileSize" style="font-size: 0.85rem; color: var(--muted); margin: 2px 0 0 0;"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="grid-column: 1 / -1;">
+            <label for="drive_link" style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--text);">Google Drive Link 🔗</label>
+            <input id="drive_link" name="drive_link" type="url" placeholder="https://drive.google.com/file/d/YOUR_FILE_ID/view?usp=sharing" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(15,17,32,0.06); background: var(--bg-soft); color: var(--text);" />
+            <p style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">📌 Optional: Add Google Drive shareable link for online access</p>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 25px;">
+          <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn-confirm">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="rr-modal-backdrop" id="deleteModal">
+    <div class="rr-modal" role="dialog" aria-modal="true" style="max-width: 400px;">
+      <h3>🗑️ Delete Book</h3>
+      <p id="deleteMessage" style="margin: 15px 0; color: var(--muted);">Are you sure you want to delete this book?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn-confirm" id="confirmDeleteBtn" style="background: #ef4444;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+    // Admin Authentication System
+    let adminToken = null;
+    let isAuthenticated = false;
+
+    // Check admin authentication on page load
+    async function checkAdminAuth() {
+      console.log('🔍 Checking ADMIN authentication (completely separate from user auth)...');
+      
+      // Always show login overlay first for security
+      showLoginOverlay();
+      
+      // Check if user came from authorized source (optional security check)
+      const referrer = document.referrer;
+      console.log('🌐 Page referrer:', referrer);
+      
+      const token = localStorage.getItem('adminToken');
+      console.log('📄 Admin token found:', !!token);
+      
+      if (!token) {
+        console.log('❌ No admin token found, showing admin login');
+        return false;
+      }
+
+      try {
+        console.log('🌐 Verifying token with server...');
+        const response = await fetch('/api/admin/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        console.log('📡 Server response status:', response.status);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('📋 Server response data:', data);
+          
+          if (data.valid) {
+            console.log('✅ Token valid, hiding login overlay');
+            adminToken = token;
+            isAuthenticated = true;
+            hideLoginOverlay();
+            
+            // Load books immediately after successful token verification
+            try {
+              await loadBooks();
+              console.log('📚 Books loaded successfully after token verification');
+            } catch (error) {
+              console.error('Failed to load books after token verification:', error);
+            }
+            
+            return true;
+          }
+        }
+      } catch (error) {
+        console.error('❌ Auth check failed:', error);
+      }
+
+      // If we reach here, token is invalid
+      console.log('🗑️ Removing invalid token');
+      localStorage.removeItem('adminToken');
+      showLoginOverlay();
+      return false;
+    }
+
+    // Handle admin login
+    async function handleAdminLogin(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      const errorDiv = document.getElementById('loginError');
+      const form = document.getElementById('adminLoginForm');
+
+      if (!email || !password) {
+        showLoginError('Please enter both email and password');
+        return;
+      }
+
+      // Show loading state
+      form.classList.add('loading');
+      hideLoginError();
+
+      try {
+        console.log('Attempting admin login with:', { email, password: '***' });
+        
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        console.log('Login response status:', response.status);
+        const data = await response.json();
+        console.log('Login response data:', data);
+
+        if (response.ok && data.success) {
+          console.log('✅ ADMIN login successful!');
+          console.log('👤 Logged in as:', data.admin.name, '(' + data.admin.email + ')');
+          adminToken = data.token;
+          isAuthenticated = true;
+          localStorage.setItem('adminToken', data.token);
+          hideLoginOverlay();
+          
+          // Load books immediately after successful login
+          try {
+            await loadBooks();
+            console.log('📚 Books loaded successfully after login');
+          } catch (error) {
+            console.error('Failed to load books after login:', error);
+          }
+        } else {
+          console.error('Login failed:', data);
+          showLoginError(data.error || 'Invalid credentials');
+        }
+      } catch (error) {
+        console.error('Login failed:', error);
+        showLoginError(`Login failed: ${error.message}`);
+      } finally {
+        form.classList.remove('loading');
+      }
+    }
+
+    // Show/hide login overlay
+    function showLoginOverlay() {
+      console.log('👁️ Showing login overlay');
+      const overlay = document.getElementById('adminLoginOverlay');
+      const content = document.getElementById('adminContent');
+      
+      if (overlay) overlay.style.display = 'flex';
+      if (content) content.style.display = 'none';
+      
+      // Clear any previous error messages
+      hideLoginError();
+    }
+
+    function hideLoginOverlay() {
+      console.log('👁️ Hiding login overlay');
+      const overlay = document.getElementById('adminLoginOverlay');
+      const content = document.getElementById('adminContent');
+      
+      if (overlay) overlay.style.display = 'none';
+      if (content) content.style.display = 'block';
+    }
+
+    // Show/hide login error
+    function showLoginError(message) {
+      const errorDiv = document.getElementById('loginError');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    function hideLoginError() {
+      document.getElementById('loginError').style.display = 'none';
+    }
+
+    // Handle admin logout
+    function handleLogout() {
+      console.log('🚪 Admin logout initiated');
+      localStorage.removeItem('adminToken');
+      adminToken = null;
+      isAuthenticated = false;
+      
+      // Clear admin form
+      document.getElementById('adminEmail').value = '';
+      document.getElementById('adminPassword').value = '';
+      
+      console.log('✅ Admin logged out successfully - redirecting to index');
+      // Redirect to index page
+      window.location.href = 'index.html';
+    }
+
+    // Theme system (unified with other pages)
+    const themeBtn = document.getElementById('toggleTheme');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const LS_KEY = 'rentread-theme';
+    
+    const themes = ['light', 'dark', 'ocean', 'forest', 'sunset', 'purple', 'rose', 'midnight', 'galaxy', 'gold', 'cyber', 'cherry', 'sky', 'emerald', 'lavender', 'red', 'pink', 'black'];
+    
+    function applyTheme(themeName) {
+      if (themes.includes(themeName)) {
+        document.documentElement.setAttribute('data-theme', themeName);
+        localStorage.setItem(LS_KEY, themeName);
+        
+        themeOptions.forEach(option => {
+          option.classList.remove('active');
+          if (option.dataset.theme === themeName) {
+            option.classList.add('active');
+          }
+        });
+      }
+    }
+    
+    // Initialize theme
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem(LS_KEY);
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+    
+    // Theme dropdown events
+    themeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      themeDropdown.classList.toggle('show');
+    });
+    
+    document.addEventListener('click', () => {
+      themeDropdown.classList.remove('show');
+    });
+    
+    themeOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const theme = option.dataset.theme;
+        applyTheme(theme);
+        themeDropdown.classList.remove('show');
+      });
+    });
+
+    // API functions
+    async function apiRequest(url, options = {}) {
+      const baseUrl = '/api/books';
+      
+      // Check authentication before making API calls
+      if (!isAuthenticated || !adminToken) {
+        showLoginOverlay();
+        throw new Error('Admin authentication required');
+      }
+      
+      try {
+        const response = await fetch(baseUrl + url, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`,
+            ...options.headers
+          },
+          ...options
+        });
+        
+        // Handle authentication errors
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem('adminToken');
+          adminToken = null;
+          isAuthenticated = false;
+          showLoginOverlay();
+          throw new Error('Admin session expired');
+        }
+        
+        return response;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+
+    // Global variables
+    let allBooks = [];
+    let currentEditId = null;
+
+    // Utility functions
+    function normalizeImageUrl(imageUrl) {
+      if (!imageUrl || !imageUrl.trim()) return '/img/logo.png';
+      const url = imageUrl.trim();
+      
+      // Already absolute path or external URL
+      if (url.startsWith('/') || url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+      }
+      
+      // Just a filename, add the covers path
+      return '/img/covers/' + url;
+    }
+
+    function showNotification(message, type = 'info') {
+      // Simple notification (you can enhance this)
+      alert(message);
+    }
+
+    // DOM functions
+    function createBookCard(book) {
+      const imageUrl = normalizeImageUrl(book.image_url);
+      console.log('Creating card for:', book.title, 'Image URL:', imageUrl);
+      
+      return `
+        <article class="card" data-id="${book.id}" data-category="${book.category || ''}" data-title="${book.title || ''}">
+          <div class="thumb" style="position: relative; overflow: hidden; border-radius: 12px 12px 0 0; background: #f0f0f0;">
+            <img src="${imageUrl}" 
+                 alt="${(book.title || 'Book').replace(/"/g, '&quot;')}" 
+                 style="width: 100%; height: 280px; object-fit: cover; display: block; background: #f0f0f0;"
+                 onerror="console.error('Image load failed:', this.src); this.onerror=null; this.src='/img/logo.png';" 
+                 onload="console.log('Image loaded:', this.src);" />
+            <span class="ribbon">${book.category || 'Uncategorized'}</span>
+            <span class="price">৳${book.price_per_day || 0}/day</span>
+          </div>
+          <div class="content">
+            <h4>${book.title || 'Untitled'}</h4>
+            <div class="meta">${book.author || 'Unknown'} • ${book.category || 'Uncategorized'}</div>
+            <div class="meta" style="margin-top: 4px; font-size: 0.8rem;">${book.description || ''}</div>
+            <div class="actions-row" style="margin-top: 12px;">
+              <button class="rent" onclick="editBook(${book.id})">✏️ Edit</button>
+              <button class="ghost" onclick="deleteBook(${book.id})">🗑️ Delete</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderBooks(books = allBooks) {
+      const grid = document.getElementById('booksGrid');
+      const count = document.getElementById('bookCount');
+      
+      if (!books || books.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--muted);">No books found. Add some books to get started!</div>';
+        count.textContent = '0 books';
+        return;
+      }
+      
+      grid.innerHTML = books.map(createBookCard).join('');
+      count.textContent = `${books.length} book${books.length !== 1 ? 's' : ''}`;
+    }
+
+    // API operations
+    async function loadBooks() {
+      try {
+        const response = await apiRequest('');
+        if (!response.ok) throw new Error('Failed to load books');
+        
+        const data = await response.json();
+        console.log('Loaded books:', data.books);
+        if (data.success) {
+          allBooks = data.books || [];
+          // Log image URLs
+          allBooks.forEach(book => {
+            console.log(`Book: ${book.title}, Image URL: ${book.image_url}`);
+          });
+          renderBooks();
+        } else {
+          throw new Error(data.error || 'Failed to load books');
+        }
+      } catch (error) {
+        console.error('Load books error:', error);
+        showNotification('Failed to load books: ' + error.message, 'error');
+        allBooks = [];
+        renderBooks();
+      }
+    }
+
+    async function saveBook(bookData) {
+      try {
+        console.log('Saving book with data:', bookData);
+        const isEdit = bookData.id && bookData.id !== '';
+        const url = isEdit ? `/${bookData.id}` : '';
+        const method = isEdit ? 'PUT' : 'POST';
+        
+        const response = await apiRequest(url, {
+          method,
+          body: JSON.stringify(bookData)
+        });
+        
+        if (!response.ok) throw new Error('Failed to save book');
+        
+        const data = await response.json();
+        console.log('Save response:', data);
+        if (data.success) {
+          showNotification(isEdit ? 'Book updated successfully!' : 'Book added successfully!', 'success');
+          await loadBooks();
+          closeBookModal();
+        } else {
+          throw new Error(data.error || 'Failed to save book');
+        }
+      } catch (error) {
+        console.error('Save book error:', error);
+        showNotification('Failed to save book: ' + error.message, 'error');
+      }
+    }
+
+    async function removeBook(bookId) {
+      try {
+        const response = await apiRequest(`/${bookId}`, {
+          method: 'DELETE'
+        });
+        
+        if (!response.ok) throw new Error('Failed to delete book');
+        
+        const data = await response.json();
+        if (data.success) {
+          showNotification('Book deleted successfully!', 'success');
+          await loadBooks();
+        } else {
+          throw new Error(data.error || 'Failed to delete book');
+        }
+      } catch (error) {
+        console.error('Delete book error:', error);
+        showNotification('Failed to delete book: ' + error.message, 'error');
+      }
+    }
+
+
+
+    // Modal functions
+    function openBookModal(book = null) {
+      const modal = document.getElementById('bookModal');
+      const title = document.getElementById('modalTitle');
+      const form = document.getElementById('bookForm');
+      const imagePreview = document.getElementById('imagePreview');
+      const previewImg = document.getElementById('previewImg');
+      
+      if (book) {
+        title.textContent = 'Edit Book';
+        form.elements['id'].value = book.id || '';
+        form.elements['title'].value = book.title || '';
+        form.elements['author'].value = book.author || '';
+        form.elements['category'].value = book.category || '';
+        form.elements['description'].value = book.description || '';
+        form.elements['price_per_day'].value = book.price_per_day || '';
+        form.elements['drive_link'].value = book.drive_link || '';
+        currentEditId = book.id;
+        
+        // Show existing image preview if available
+        if (book.image_url) {
+          const imageUrl = normalizeImageUrl(book.image_url);
+          previewImg.src = imageUrl;
+          imagePreview.style.display = 'block';
+        } else {
+          imagePreview.style.display = 'none';
+        }
+      } else {
+        title.textContent = 'Add New Book';
+        form.reset();
+        imagePreview.style.display = 'none';
+        currentEditId = null;
+      }
+      
+      modal.classList.add('show');
+    }
+
+    function closeBookModal() {
+      document.getElementById('bookModal').classList.remove('show');
+      document.getElementById('bookForm').reset();
+      currentEditId = null;
+    }
+
+    function openDeleteModal(book) {
+      const modal = document.getElementById('deleteModal');
+      const message = document.getElementById('deleteMessage');
+      
+      message.textContent = `Are you sure you want to delete "${book.title}"? This action cannot be undone.`;
+      modal.classList.add('show');
+      
+      // Store book id for deletion
+      document.getElementById('confirmDeleteBtn').onclick = async () => {
+        document.getElementById('deleteModal').classList.remove('show');
+        await removeBook(book.id);
+      };
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('show');
+    }
+
+    // Event handlers
+    function editBook(bookId) {
+      const book = allBooks.find(b => b.id == bookId);
+      if (book) {
+        openBookModal(book);
+      }
+    }
+
+    function deleteBook(bookId) {
+      const book = allBooks.find(b => b.id == bookId);
+      if (book) {
+        openDeleteModal(book);
+      }
+    }
+
+    function searchBooks() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      if (!query) {
+        renderBooks();
+        return;
+      }
+      
+      const filtered = allBooks.filter(book => 
+        (book.title && book.title.toLowerCase().includes(query)) ||
+        (book.author && book.author.toLowerCase().includes(query)) ||
+        (book.category && book.category.toLowerCase().includes(query)) ||
+        (book.description && book.description.toLowerCase().includes(query))
+      );
+      
+      renderBooks(filtered);
+    }
+
+
+
+    // Initialize immediately when script loads
+    (function() {
+      console.log('🚀 Admin page script loaded');
+      console.log('🔒 Admin panel is completely separate from user authentication');
+      
+      // Clear any user authentication tokens to ensure complete separation
+      // Note: We keep adminToken separate
+      
+      // Show login overlay immediately if not authenticated as admin
+      if (!localStorage.getItem('adminToken')) {
+        console.log('⚡ No admin token on page load, showing login immediately');
+        
+        // Multiple attempts to ensure it works
+        setTimeout(() => showLoginOverlay(), 10);
+        setTimeout(() => showLoginOverlay(), 100);
+        setTimeout(() => showLoginOverlay(), 500);
+      } else {
+        console.log('🔑 Admin token found, will verify with server');
+      }
+    })();
+
+    // Backup check when page becomes visible (for navigation between tabs)
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden && !isAuthenticated) {
+        console.log('📋 Page visible and not authenticated, showing login');
+        showLoginOverlay();
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('📄 DOM loaded, initializing admin page');
+      
+      // Initialize admin authentication
+      await checkAdminAuth();
+      
+      // Initialize login form
+      const loginForm = document.getElementById('adminLoginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', handleAdminLogin);
+      }
+      
+      // Event listeners
+      document.getElementById('addNewBtn').addEventListener('click', () => openBookModal());
+      document.getElementById('refreshBtn').addEventListener('click', loadBooks);
+      document.getElementById('searchBtn').addEventListener('click', searchBooks);
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        document.getElementById('searchInput').value = '';
+        renderBooks();
+      });
+      
+      document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchBooks();
+      });
+      
+      // Modal event listeners
+      document.getElementById('cancelBtn').addEventListener('click', closeBookModal);
+      document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
+      
+      // Image preview functionality
+      document.getElementById('book_image').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const preview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.style.display = 'none';
+        }
+      });
+      
+      // Book file preview functionality
+      document.getElementById('book_file').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const preview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        
+        if (file) {
+          fileName.textContent = file.name;
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+          fileSize.textContent = `Size: ${sizeMB} MB`;
+          preview.style.display = 'block';
+        } else {
+          preview.style.display = 'none';
+        }
+      });
+      
+      // Image upload preview
+      document.getElementById('book_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            imagePreview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          imagePreview.style.display = 'none';
+        }
+      });
+      
+      // Form submission with file upload
+      document.getElementById('bookForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const bookData = {};
+        
+        // Handle file uploads
+        const imageFile = formData.get('book_image');
+        const bookFile = formData.get('book_file');
+        
+        // Get regular form data
+        for (const [key, value] of formData.entries()) {
+          if (key !== 'book_image' && key !== 'book_file' && value && value.trim && value.trim()) {
+            bookData[key] = value.trim();
+          }
+        }
+        
+        // Handle drive_link separately to allow empty values
+        const driveLink = formData.get('drive_link');
+        if (driveLink) {
+          bookData.drive_link = driveLink.trim();
+        }
+        
+        if (!bookData.title) {
+          showNotification('Book title is required!', 'error');
+          return;
+        }
+        
+        // If there's an image file, upload it first
+        if (imageFile && imageFile.size > 0) {
+          try {
+            const uploadFormData = new FormData();
+            uploadFormData.append('image', imageFile);
+            
+            const uploadResponse = await fetch('/api/upload', {
+              method: 'POST',
+              body: uploadFormData
+            });
+            
+            if (uploadResponse.ok) {
+              const uploadData = await uploadResponse.json();
+              console.log('Upload response:', uploadData);
+              if (uploadData.success) {
+                // Use the full path from the server response
+                bookData.image_url = uploadData.path || `/img/covers/${uploadData.filename}`;
+                console.log('Image uploaded successfully!');
+                console.log('Filename:', uploadData.filename);
+                console.log('Full path:', bookData.image_url);
+              } else {
+                throw new Error(uploadData.error || 'Upload failed');
+              }
+            } else {
+              throw new Error('Upload request failed');
+            }
+          } catch (error) {
+            console.error('Image upload error:', error);
+            showNotification('Image upload failed: ' + error.message, 'error');
+            return;
+          }
+        }
+        
+        // If there's a book file (PDF/PPTX), upload it
+        if (bookFile && bookFile.size > 0) {
+          try {
+            const bookFormData = new FormData();
+            bookFormData.append('bookfile', bookFile);
+            
+            const bookUploadResponse = await fetch('/api/upload-book', {
+              method: 'POST',
+              body: bookFormData
+            });
+            
+            if (bookUploadResponse.ok) {
+              const bookUploadData = await bookUploadResponse.json();
+              console.log('Book file upload response:', bookUploadData);
+              if (bookUploadData.success) {
+                bookData.filename = bookUploadData.filename;
+                bookData.pdf_file = bookUploadData.path;
+                console.log('Book file uploaded successfully!');
+                console.log('Filename:', bookUploadData.filename);
+              } else {
+                throw new Error(bookUploadData.error || 'Book upload failed');
+              }
+            } else {
+              throw new Error('Book upload request failed');
+            }
+          } catch (error) {
+            console.error('Book file upload error:', error);
+            showNotification('Book file upload failed: ' + error.message, 'error');
+            return;
+          }
+        }
+        
+        await saveBook(bookData);
+      });
+      
+      // Close modals when clicking outside
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('rr-modal-backdrop')) {
+          closeBookModal();
+          closeDeleteModal();
+        }
+      });
+      
+      // Books will be loaded automatically after authentication succeeds
+    });
+</script>
+</body>
+</html>

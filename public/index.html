@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RentRead • Your Digital Book Rental</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- Header / Topbar -->
+  <header class="topbar">
+    <div class="container row between">
+      <a class="brand" href="/">
+        <div class="brand-logo">
+          <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background circle -->
+            <circle cx="20" cy="20" r="18" fill="#4F46E5" stroke="#3730A3" stroke-width="2"/>
+            
+            <!-- Book icon -->
+            <rect x="12" y="14" width="16" height="12" rx="1" fill="#FFFFFF"/>
+            <rect x="12" y="14" width="3" height="12" fill="#E5E7EB"/>
+            <line x1="17" y1="17" x2="26" y2="17" stroke="#9CA3AF" stroke-width="1"/>
+            <line x1="17" y1="19" x2="24" y2="19" stroke="#9CA3AF" stroke-width="1"/>
+            <line x1="17" y1="21" x2="26" y2="21" stroke="#9CA3AF" stroke-width="1"/>
+            <line x1="17" y1="23" x2="25" y2="23" stroke="#9CA3AF" stroke-width="1"/>
+            
+            <!-- Rent arrow -->
+            <circle cx="28" cy="12" r="4" fill="#10B981"/>
+            <path d="M26 12 L28 10 L28 11 L30 11 L30 13 L28 13 L28 14 Z" fill="white"/>
+            
+            <!-- RR text -->
+            <text x="20" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#4F46E5">RR</text>
+          </svg>
+        </div>
+        <div>
+          <h1>RentRead</h1>
+          <small>Read more • Spend less</small>
+        </div>
+      </a>
+      <nav class="nav">
+        <a href="/" class="active">Home</a>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/admin.html">Admin</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+      <div class="actions">
+        <div class="theme-selector">
+          <button class="btn" id="toggleTheme" aria-label="Choose theme">🎨 Themes</button>
+          <div class="theme-dropdown" id="themeDropdown">
+            <button class="theme-option" data-theme="light">☀️ Light</button>
+            <button class="theme-option" data-theme="dark">🌙 Dark</button>
+            <button class="theme-option" data-theme="ocean">🌊 Ocean</button>
+            <button class="theme-option" data-theme="forest">🌲 Forest</button>
+            <button class="theme-option" data-theme="sunset">🌅 Sunset</button>
+            <button class="theme-option" data-theme="purple">💜 Purple</button>
+            <button class="theme-option" data-theme="rose">🌹 Rose</button>
+            <button class="theme-option" data-theme="midnight">🌌 Midnight</button>
+            <button class="theme-option" data-theme="galaxy">🌠 Galaxy</button>
+            <button class="theme-option" data-theme="gold">🏆 Gold</button>
+            <button class="theme-option" data-theme="cyber">⚡ Cyber</button>
+            <button class="theme-option" data-theme="cherry">🍒 Cherry</button>
+            <button class="theme-option" data-theme="sky">☁️ Sky</button>
+            <button class="theme-option" data-theme="emerald">� Emerald</button>
+            <button class="theme-option" data-theme="lavender">🪻 Lavender</button>
+            <button class="theme-option" data-theme="red">🔴 Red</button>
+            <button class="theme-option" data-theme="pink">🎀 Pink</button>
+            <button class="theme-option" data-theme="black">⚫ Black</button>
+          </div>
+        </div>
+        <div id="authActions">
+          <!-- Will be populated by JavaScript based on auth state -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-card">
+        <div>
+          <h2>Welcome to RentRead — Bangladesh’s modern book rental hub</h2>
+          <p>Computer Science, General Science, Science Fiction & Extra Education — rent top titles for days, not dollars.</p>
+          <div class="hero-badges">
+            <span class="badge">BDT friendly pricing</span>
+            <span class="badge alt">Delivery-ready listings</span>
+          </div>
+
+          <div class="toolbar" style="margin-top:18px">
+            <div class="search">
+              <span>🔎</span>
+              <input id="searchInput" type="search" placeholder="Search title or category… (e.g., Algorithm, Physics)" />
+            </div>
+            <div class="pills" role="tablist">
+              <button class="pill active" data-filter="all">All</button>
+              <button class="pill" data-filter="Computer Science">Computer Science</button>
+              <button class="pill" data-filter="General Science">General Science</button>
+              <button class="pill" data-filter="Science Fiction">Science Fiction</button>
+              <button class="pill" data-filter="Extra Educational">Extra Educational</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual brand-logo" aria-hidden="true">
+          <img src="./img/logo.png" />
+
+        </div>
+      </div>
+
+      <div class="section-title">
+        <h3>Available Books</h3>
+        <small class="subtle" id="countLabel">Showing all</small>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid" id="bookGrid">
+        <!-- Books will be loaded dynamically from the API -->
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footgrid">
+      <div>
+        <h5>About RentRead</h5>
+        <p class="subtle"><strong>RentRead</strong> offers book rentals at affordable rates, keeping Bangladeshi students in mind. Read amazing Bangla & English titles for a small price, for a limited time.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <p class="subtle"><a href="/">All Books</a><br><a href="#">Pricing</a><br><a href="#">FAQ</a></p>
+      </div>
+      <div>
+        <h5>Legal</h5>
+        <p class="subtle"><a href="#">Terms</a><br><a href="#">Privacy</a><br><a href="#">Returns</a></p>
+      </div>
+    </div>
+    <div class="container" style="margin-top:18px; color:var(--muted); font-size:.9rem">© 2025 RentRead • All Rights Reserved</div>
+  </footer>
+
+  <!-- Rent modal -->
+  <div class="rr-modal-backdrop" id="rentModal">
+    <div class="rr-modal" role="dialog" aria-modal="true" aria-labelledby="rentTitle">
+      <h3 id="rentTitle">Rent Book</h3>
+      <div id="rentBookInfo" style="margin-bottom:12px;color:var(--muted)"></div>
+
+      <!-- Days selector + live price for the simple modal (keeps old pink look) -->
+      <div style="margin-bottom:10px;">
+        <label for="rentDays">Days to rent (1-30)</label>
+        <div style="display:flex; align-items:center; gap:12px; margin-top:8px;">
+          <input id="rr_rentDays" type="number" min="1" max="30" value="1" style="width:80px; padding:8px; border-radius:6px; border:1px solid #e6e6e6;" />
+          <div style="font-weight:700; color:var(--accent); font-size:1.05rem;">Total: <span id="rrTotalPrice">৳0</span></div>
+        </div>
+        <div id="rrPriceBreakdown" style="margin-top:8px; color:var(--muted); font-size:0.9rem"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="rentCancel">Cancel</button>
+        <button class="btn-confirm" id="rentConfirm">Rent & Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Multi-theme system
+    const themeBtn = document.getElementById('toggleTheme');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const LS_KEY = 'rentread-theme';
+    
+  const themes = ['light', 'dark', 'ocean', 'forest', 'sunset', 'purple', 'rose', 'midnight', 'galaxy', 'gold', 'cyber', 'cherry', 'sky', 'emerald', 'lavender', 'red', 'pink', 'black'];
+    
+    function applyTheme(themeName) {
+      if (themes.includes(themeName)) {
+        document.documentElement.setAttribute('data-theme', themeName);
+        localStorage.setItem(LS_KEY, themeName);
+        
+        // Update active state
+        themeOptions.forEach(option => {
+          option.classList.remove('active');
+          if (option.dataset.theme === themeName) {
+            option.classList.add('active');
+          }
+        });
+      }
+    }
+    
+    // Initialize theme
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem(LS_KEY);
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+    
+    // Theme dropdown toggle
+    themeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      themeDropdown.classList.toggle('show');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+      themeDropdown.classList.remove('show');
+    });
+    
+    // Theme option clicks
+    themeOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const theme = option.dataset.theme;
+        applyTheme(theme);
+        themeDropdown.classList.remove('show');
+      });
+    });
+
+    // Filter & Search
+    const pills = document.querySelectorAll('.pill');
+    const grid = document.getElementById('bookGrid');
+    const countLabel = document.getElementById('countLabel');
+    const searchInput = document.getElementById('searchInput');
+
+    let currentFilter = 'all';
+
+    function render(){
+      const term = (searchInput.value || '').toLowerCase().trim();
+      const cards = Array.from(grid.querySelectorAll('.card'));
+      let visible = 0;
+      cards.forEach(c => {
+        const cat = c.dataset.category;
+        const title = (c.dataset.title || '').toLowerCase();
+        const matchesCat = (currentFilter === 'all') || (cat === currentFilter);
+        const matchesTerm = !term || title.includes(term) || (cat && cat.toLowerCase().includes(term));
+        const show = matchesCat && matchesTerm;
+        c.style.display = show ? '' : 'none';
+        visible += show ? 1 : 0;
+      });
+      countLabel.textContent = visible === grid.querySelectorAll('.card').length ? 'Showing all' : `Showing ${visible} result${visible!==1?'s':''}`;
+    }
+
+    pills.forEach(p => p.addEventListener('click', () => {
+      pills.forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      currentFilter = p.dataset.filter;
+      render();
+    }));
+
+    searchInput.addEventListener('input', render);
+    // Initial render for the static grid
+    render();
+
+    // Rent modal logic
+  const rentModal = document.getElementById('rentModal');
+  // use a namespaced id for the simple pink modal to avoid colliding with the richer modal later in file
+  const rentDaysInput = document.getElementById('rr_rentDays');
+    const rentBookInfo = document.getElementById('rentBookInfo');
+    let currentRentBookId = null;
+
+    function openSimpleRentModal(bookId, title, priceText){
+      currentRentBookId = bookId;
+      rentBookInfo.textContent = title + (priceText ? ' — ' + priceText : '');
+      // default to 1 day for clarity
+      rentDaysInput.value = 1;
+      // ensure the small simple modal shows the computed price immediately
+      updateRrPricing(priceText);
+      rentModal.classList.add('show');
+    }
+
+    function closeRentModal(){ currentRentBookId = null; rentModal.classList.remove('show'); }
+
+    // Update the small (rr-) modal pricing display when days change.
+    function parseBasePriceFromText(priceText) {
+      if (!priceText) return 15; // fallback default
+      const m = priceText.match(/৳\s*(\d+)/);
+      if (m && m[1]) return parseInt(m[1], 10);
+      const n = priceText.match(/(\d+)/);
+      return n ? parseInt(n[1], 10) : 15;
+    }
+
+    function updateRrPricing(priceTextOverride){
+      try {
+        const days = Math.max(1, Math.min(30, parseInt(rentDaysInput.value || '1', 10)));
+        // first try to get price from the modal info if available
+        const priceText = priceTextOverride || (rentBookInfo ? rentBookInfo.textContent : '') || '';
+        const basePrice = parseBasePriceFromText(priceText);
+        const dailyIncrement = 2; // same rule as the main pricing
+        const total = basePrice + ((days - 1) * dailyIncrement);
+        const totalEl = document.getElementById('rrTotalPrice');
+        const breakdownEl = document.getElementById('rrPriceBreakdown');
+        if (totalEl) totalEl.textContent = `৳${total}`;
+        if (breakdownEl) {
+          if (days === 1) {
+            breakdownEl.textContent = `Base: ৳${basePrice} for 1 day`;
+          } else {
+            const extra = (days - 1) * dailyIncrement;
+            breakdownEl.innerHTML = `Base: ৳${basePrice} <br>Extra ${days - 1} day(s): ৳${extra} <br><strong>Total: ৳${total}</strong>`;
+          }
+        }
+      } catch (e) {
+        console.warn('updateRrPricing error', e);
+      }
+    }
+
+    // wire input updates
+    if (rentDaysInput) {
+      rentDaysInput.addEventListener('input', () => updateRrPricing());
+    }
+
+    document.getElementById('rentCancel').addEventListener('click', ()=> closeRentModal());
+
+    document.getElementById('rentConfirm').addEventListener('click', async ()=>{
+      const days = parseInt(rentDaysInput.value,10) || 1;
+      if (!currentRentBookId) return closeRentModal();
+      const token = localStorage.getItem('rr_token');
+      if (!token) { window.location = '/signin.html'; return; }
+      try {
+        const res = await fetch('/api/rent/rent', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({bookId: currentRentBookId, days})});
+        const data = await res.json();
+        if (res.ok && data.success) {
+          alert('Rented successfully — expires in ' + (data.expiresInDays || days) + ' day(s)');
+          closeRentModal();
+          // refresh UI: reload page or re-run render
+          window.location.reload();
+        } else {
+          alert(data.error || 'Could not create rental');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network or server error');
+      }
+    });
+
+    // attach rent button handlers
+    function attachRentHandlers(){
+      document.querySelectorAll('.rent').forEach(btn => {
+        if (btn.dataset.attached) return; // avoid duplicate
+        btn.dataset.attached = '1';
+        btn.addEventListener('click', (e)=>{
+          const card = e.currentTarget.closest('.card');
+          const bookId = card.dataset.title ? encodeURIComponent(card.dataset.title) : null;
+          // we prefer an id, but we kept title as identifier in static HTML. If backend uses numeric id, adapt data-bookid attribute.
+          const priceEl = card.querySelector('.price');
+          const priceText = priceEl ? priceEl.textContent.trim() : '';
+          // If book has data-bookid attribute use that; else use title as identifier (backend expects numeric id — if absent, rent will fail)
+          const bookIdAttr = card.dataset.bookid || card.dataset.id || card.dataset.title;
+          openSimpleRentModal(bookIdAttr, card.querySelector('h4').textContent.trim(), priceText);
+        });
+      });
+    }
+
+    attachRentHandlers();
+
+    // Direct rental function (auto-rent with default 7 days)
+    async function rentBookDirectly(bookId, bookTitle, pricePerDay) {
+      const token = localStorage.getItem('rr_token');
+      if (!token) {
+        if (confirm('You need to login to rent books. Click OK to go to login page.')) {
+          window.location.href = '/signin.html';
+        }
+        return;
+      }
+
+      const defaultDays = 7; // Auto-rent for 7 days
+      const totalPrice = pricePerDay + ((defaultDays - 1) * 2); // Base price + increment
+
+      try {
+        const response = await fetch('/api/rent-book', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            bookTitle: bookTitle,
+            days: defaultDays,
+            totalPrice: totalPrice
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          alert(`🎉 "${bookTitle}" rented successfully for ${defaultDays} days!\n\nGo to Dashboard or My Account to read your book.`);
+          // Optionally reload to update UI
+          // window.location.reload();
+        } else {
+          alert('❌ Rental failed: ' + (data.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Rental error:', error);
+        alert('❌ Network error. Please try again.');
+      }
+    }
+  </script>
+
+  <!-- Authentication Script -->
+  <script src="auth.js"></script>
+  <script>
+    // Handle authentication state on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authActions = document.getElementById('authActions');
+      
+      // Load books from API
+      await loadBooks();
+      
+      try {
+        const isAuthenticated = await authManager.checkAuth();
+        
+        if (isAuthenticated) {
+          // User is authenticated - show dashboard and logout
+          authActions.innerHTML = `
+            <a class="btn" href="dashboard.html">Dashboard</a>
+            <button class="btn secondary" onclick="handleLogout()">Logout</button>
+          `;
+        } else {
+          // User is not authenticated - show sign in and sign up
+          authActions.innerHTML = `
+            <a class="btn" href="signin.html">Sign In</a>
+            <a class="btn primary" href="signup.html">Sign Up</a>
+          `;
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        // Default to non-authenticated state
+        authActions.innerHTML = `
+          <a class="btn" href="signin.html">Sign In</a>
+          <a class="btn primary" href="signup.html">Sign Up</a>
+        `;
+      }
+    });
+
+    // Load books from API
+    async function loadBooks() {
+      try {
+        const response = await fetch('/api/books');
+        const data = await response.json();
+        const books = data.books || data;
+        renderBooks(books);
+      } catch (error) {
+        console.error('Error loading books:', error);
+        document.getElementById('bookGrid').innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--muted);">
+            <p>Failed to load books. Please try again later.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Render books into grid
+    function renderBooks(books) {
+      const grid = document.getElementById('bookGrid');
+      const countLabel = document.getElementById('countLabel');
+      
+      if (!books || books.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--muted);">
+            <p>📚 No books available at the moment.</p>
+          </div>
+        `;
+        countLabel.textContent = 'No books found';
+        return;
+      }
+
+      countLabel.textContent = `Showing ${books.length} book${books.length !== 1 ? 's' : ''}`;
+      
+      grid.innerHTML = books.map(book => {
+        const pricePerDay = book.price_per_day || 15;
+        const defaultDays = 7;
+        const totalPrice = pricePerDay * defaultDays;
+        const priceText = `৳${totalPrice} total • ${defaultDays} days`;
+        const shortPrice = `৳${totalPrice} • ${defaultDays}d`;
+        const meta = book.description || `${book.author || 'Various'} • ৳${pricePerDay}/day`;
+        
+        return `
+          <article class="card" data-category="${book.category || 'General'}" data-title="${book.title}" data-book-id="${book.id}">
+            <div class="thumb">
+              <img src="${book.image_url || '/img/logo.png'}" alt="${book.title}" 
+                   onerror="this.src='/img/logo.png'"/>
+              <span class="ribbon">${book.category || 'General'}</span>
+              <span class="price">${shortPrice}</span>
+            </div>
+            <div class="content">
+              <h4>${book.title}</h4>
+              <div class="meta">${meta}</div>
+              <div class="actions-row">
+                <button class="rent" onclick="rentBookDirectly(${book.id}, '${book.title.replace(/'/g, "\\'")}', ${pricePerDay})">Rent Now</button>
+                <button class="ghost">Details</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // Handle logout
+    function handleLogout() {
+      authManager.logout();
+      showNotification('Logged out successfully', 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+
+    // Rental Duration Modal Functions
+    let currentBook = null;
+
+    function openRentModal(bookTitle, basePrice, bookElement) {
+      currentBook = { title: bookTitle, basePrice: parseInt(basePrice), element: bookElement };
+      document.getElementById('modalBookTitle').textContent = bookTitle;
+      document.getElementById('rentDays').value = 1;
+      document.getElementById('rentDaysSlider').value = 1;
+      document.getElementById('rentDaysSelect').value = 1;
+      updateSelectOptions(); // Update dropdown options with current book's pricing
+      updatePricing();
+      document.getElementById('rentModal').style.display = 'flex';
+    }
+
+    function updateSelectOptions() {
+      if (!currentBook) return;
+      
+      const basePrice = currentBook.basePrice;
+      const select = document.getElementById('rentDaysSelect');
+      
+      // Update dropdown options with dynamic pricing
+      const options = [
+        { days: 1, label: '1 Day' },
+        { days: 2, label: '2 Days' },
+        { days: 3, label: '3 Days' },
+        { days: 4, label: '4 Days' },
+        { days: 5, label: '5 Days' },
+        { days: 7, label: '7 Days' },
+        { days: 10, label: '10 Days' },
+        { days: 14, label: '14 Days' },
+        { days: 21, label: '21 Days' },
+        { days: 30, label: '30 Days' }
+      ];
+      
+      select.innerHTML = '';
+      options.forEach(option => {
+        const price = basePrice + ((option.days - 1) * 2);
+        const optionElement = document.createElement('option');
+        optionElement.value = option.days;
+        optionElement.textContent = `${option.label} - ৳${price}`;
+        select.appendChild(optionElement);
+      });
+    }
+
+    function updateDaysFromSelect() {
+      const selectValue = document.getElementById('rentDaysSelect').value;
+      document.getElementById('rentDays').value = selectValue;
+      document.getElementById('rentDaysSlider').value = selectValue;
+      updatePricing();
+    }
+
+    function closeRentModal() {
+      document.getElementById('rentModal').style.display = 'none';
+      currentBook = null;
+    }
+
+    function updateDaysFromSlider() {
+      const sliderValue = document.getElementById('rentDaysSlider').value;
+      document.getElementById('rentDays').value = sliderValue;
+      document.getElementById('rentDaysSelect').value = sliderValue;
+      updateSliderBackground(sliderValue);
+      updatePricing();
+    }
+
+    function updateDaysFromInput() {
+      const inputValue = document.getElementById('rentDays').value;
+      document.getElementById('rentDaysSlider').value = inputValue;
+      document.getElementById('rentDaysSelect').value = inputValue;
+      updateSliderBackground(inputValue);
+      updatePricing();
+    }
+
+    function updateSliderBackground(value) {
+      const slider = document.getElementById('rentDaysSlider');
+      const percentage = ((value - 1) / (30 - 1)) * 100;
+      slider.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${percentage}%, #ddd ${percentage}%, #ddd 100%)`;
+    }
+
+    function updatePricing() {
+      if (!currentBook) return;
+      
+      const days = parseInt(document.getElementById('rentDays').value);
+      const basePrice = currentBook.basePrice;
+      
+      // Dynamic pricing: base price + (extra days * 2)
+      const totalPrice = basePrice + ((days - 1) * 2);
+      const dailyIncrement = 2;
+      
+      // Add visual feedback for price update
+      const totalPriceElement = document.getElementById('totalPrice');
+      const finalPriceElement = document.getElementById('finalPrice');
+      const customPriceElement = document.getElementById('customPrice');
+      
+      totalPriceElement.classList.add('price-update');
+      setTimeout(() => totalPriceElement.classList.remove('price-update'), 300);
+      
+      // Update main price display
+      totalPriceElement.textContent = `৳${totalPrice}`;
+      finalPriceElement.textContent = `৳${totalPrice}`;
+      customPriceElement.textContent = `৳${totalPrice}`;
+      
+      // Update dropdown selection if it matches
+      const selectElement = document.getElementById('rentDaysSelect');
+      if (selectElement.value !== days.toString()) {
+        selectElement.value = days;
+      }
+      
+      // Create detailed breakdown
+      let breakdown = '';
+      if (days === 1) {
+        breakdown = `📅 Base price for 1 day: ৳${basePrice}`;
+      } else {
+        const extraDays = days - 1;
+        const extraCost = extraDays * dailyIncrement;
+        breakdown = `📅 Base price (1 day): ৳${basePrice}<br>`;
+        breakdown += `📈 Extra ${extraDays} day(s): ${extraDays} × ৳${dailyIncrement} = ৳${extraCost}<br>`;
+        breakdown += `🎯 <strong>Total: ৳${basePrice} + ৳${extraCost} = ৳${totalPrice}</strong>`;
+      }
+      document.getElementById('priceBreakdown').innerHTML = breakdown;
+      
+      // Update daily rate info
+      const dailyRate = (totalPrice / days).toFixed(2);
+      document.getElementById('dailyRate').textContent = `📊 Average: ৳${dailyRate} per day`;
+      
+      // Update savings info with dynamic content
+      let savingsText = '';
+      if (days >= 14) {
+        const compared1Day = basePrice * days;
+        const savings = compared1Day - totalPrice;
+        savingsText = `🎉 Amazing! You save ৳${savings} compared to daily rentals!`;
+      } else if (days >= 7) {
+        savingsText = `🎉 Great choice! You're getting ${days} days for just ৳${totalPrice}`;
+      } else if (days >= 3) {
+        savingsText = `👍 Good value! Longer rentals give better rates`;
+      } else {
+        savingsText = `💡 Tip: Rent for more days to get better value!`;
+      }
+      document.getElementById('savingsInfo').textContent = savingsText;
+      
+      // Update slider background
+      updateSliderBackground(days);
+    }
+
+    function proceedToPayment() {
+      if (!currentBook) return;
+      
+      const days = parseInt(document.getElementById('rentDays').value);
+      const totalPrice = currentBook.basePrice + ((days - 1) * 2);
+      
+      // Store rental details for registration/login
+      sessionStorage.setItem('pendingRental', JSON.stringify({
+        bookTitle: currentBook.title,
+        days: days,
+        totalPrice: totalPrice
+      }));
+      
+      closeRentModal();
+      
+      // Check if user is logged in
+      const token = localStorage.getItem('token');
+      if (token) {
+        // User is logged in, proceed with rental
+        processRental();
+      } else {
+        // User needs to login/register
+        showAuthOptions();
+      }
+    }
+
+    function showAuthOptions() {
+      const choice = confirm('You need to login or register to rent books.\n\nClick OK to Login or Cancel to Register');
+      if (choice) {
+        window.location.href = 'signin.html';
+      } else {
+        window.location.href = 'signup.html';
+      }
+    }
+
+    function processRental() {
+      const rentalData = JSON.parse(sessionStorage.getItem('pendingRental'));
+      if (!rentalData) return;
+      
+      const token = localStorage.getItem('token');
+      
+      fetch('/api/rent-book', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(rentalData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showNotification(`Book rented successfully for ${rentalData.days} days!`, 'success');
+          sessionStorage.removeItem('pendingRental');
+        } else {
+          showNotification(data.message || 'Rental failed', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Rental error:', error);
+        showNotification('Rental failed. Please try again.', 'error');
+      });
+    }
+
+    // Update rent buttons to use modal
+    document.addEventListener('DOMContentLoaded', function() {
+      const rentButtons = document.querySelectorAll('.rent');
+      rentButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          const card = this.closest('.card');
+          const bookTitle = card.getAttribute('data-title');
+          const priceElement = card.querySelector('.price');
+          const basePrice = priceElement.textContent.match(/৳(\d+)/)[1];
+          
+          openRentModal(bookTitle, basePrice, card);
+        });
+      });
+    });
+  </script>
+
+  <!-- Rental Duration Modal -->
+  <div id="rentModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📚 Rent Book</h3>
+        <span class="close" onclick="closeRentModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <h4 id="modalBookTitle" style="color: var(--accent); margin-bottom: 20px;"></h4>
+        
+        <div class="form-group">
+          <label for="rentDays">🗓️ Select Rental Duration:</label>
+          
+          <!-- Days & Price Selector -->
+          <div style="margin-top: 12px;">
+            <!-- Dropdown Style Selection -->
+            <div class="duration-selector">
+              <select id="rentDaysSelect" onchange="updateDaysFromSelect()" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; background: white; cursor: pointer;">
+                <option value="1">1 Day - ৳15</option>
+                <option value="2">2 Days - ৳17</option>
+                <option value="3">3 Days - ৳19</option>
+                <option value="4">4 Days - ৳21</option>
+                <option value="5">5 Days - ৳23</option>
+                <option value="7">7 Days - ৳27</option>
+                <option value="10">10 Days - ৳33</option>
+                <option value="14">14 Days - ৳41</option>
+                <option value="21">21 Days - ৳55</option>
+                <option value="30">30 Days - ৳73</option>
+              </select>
+            </div>
+            
+            <!-- Or Custom Range -->
+            <div style="margin-top: 15px; padding: 15px; background: var(--bg-soft); border-radius: 8px; border: 1px solid #ddd;">
+              <label style="font-size: 0.9rem; color: var(--muted); margin-bottom: 8px; display: block;">Or choose custom days:</label>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" id="rentDaysSlider" min="1" max="30" value="1" 
+                       style="flex: 1;" oninput="updateDaysFromSlider()">
+                <div style="display: flex; align-items: center; gap: 8px; min-width: 140px;">
+                  <input type="number" id="rentDays" min="1" max="30" value="1" 
+                         style="width: 50px; padding: 6px; border: 2px solid #ddd; border-radius: 4px; text-align: center; font-weight: bold;" 
+                         onchange="updateDaysFromInput()">
+                  <span style="color: var(--muted); font-size: 0.85rem;">days</span>
+                  <span id="customPrice" style="font-weight: bold; color: var(--accent); font-size: 0.9rem; min-width: 50px;">৳15</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="pricing-info" style="background: linear-gradient(135deg, var(--bg) 0%, var(--bg-soft) 100%); padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid rgba(79, 70, 229, 0.1);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="font-size: 1.1rem; color: var(--text); font-weight: 600;">💰 Total Cost:</span>
+            <span id="totalPrice" style="font-size: 1.5rem; font-weight: bold; color: var(--accent);">৳0</span>
+          </div>
+          
+          <div id="priceBreakdown" style="font-size: 0.95rem; color: var(--muted); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px; line-height: 1.5;"></div>
+          
+          <div id="dailyRate" style="margin-top: 10px; padding: 8px 12px; background: rgba(79, 70, 229, 0.1); border-radius: 6px; font-size: 0.85rem; color: var(--accent); text-align: center;"></div>
+        </div>
+        
+        <div style="margin-top: 15px; padding: 12px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border-left: 4px solid #22c55e;">
+          <div style="font-size: 0.9rem; color: #16a34a;">
+            <span style="font-weight: 600;">💡 Smart Pricing:</span>
+            <span id="savingsInfo">Longer rentals = better value!</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeRentModal()">❌ Cancel</button>
+        <button class="btn-primary" onclick="proceedToPayment()">
+          🚀 Rent for <span id="finalPrice">৳0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+    <!-- Image fallback script: set a placeholder when external images fail to load -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        try {
+          const placeholder = '/img/logo.png';
+          document.querySelectorAll('.thumb img').forEach(img => {
+            // If src is empty or seems malformed, set placeholder immediately
+            if (!img.src || img.src.trim() === '') {
+              img.src = placeholder;
+            }
+
+            // Add an error handler to replace broken images with the placeholder
+            img.onerror = function() {
+              this.onerror = null;
+              this.src = placeholder;
+              this.style.objectFit = 'cover';
+            };
+
+            // Ensure sizing and visibility
+            img.style.display = 'block';
+            img.style.width = '100%';
+            img.style.height = img.style.height || '280px';
+            img.style.objectFit = 'cover';
+          });
+
+          // Also ensure any dynamically created cards get the same handler
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach(m => {
+              m.addedNodes.forEach(node => {
+                if (node.nodeType === 1) {
+                  node.querySelectorAll && node.querySelectorAll('.thumb img').forEach(img => {
+                    img.onerror = function() { this.onerror = null; this.src = placeholder; };
+                  });
+                }
+              });
+            });
+          });
+          observer.observe(document.getElementById('bookGrid') || document.body, { childList: true, subtree: true });
+        } catch (e) {
+          console.error('Image fallback script failed', e);
+        }
+      });
+    </script>
+
+  </body>
+  </html>
